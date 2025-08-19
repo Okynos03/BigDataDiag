@@ -1,10 +1,10 @@
 class empleadoModel:
-    def __init__(self, emp_no, first_name, last_name, gender, hire_date):
-        self.emp_no = emp_no
-        self.first_name = first_name
-        self.last_name = last_name
-        self.gender = gender
-        self.hire_date = hire_date
+    def __init__(self):
+        self.emp_no = None
+        self.first_name = None
+        self.last_name = None
+        self.gender = None
+        self.hire_date = None
 
     def getGender(self):
         return self.gender
