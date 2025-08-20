@@ -4,27 +4,23 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Examen Diagnostico Empleados</title>
-  <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 16px; }
-    table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-    th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
-    th { background: #f5f5f5; }
-    .muted { color: #666; }
-  </style>
+  <link rel="stylesheet" href="../static/styles.css">
 </head>
 <body>
   <h1>Empleados</h1>
 
   <nav>
-    <p>1) Listar a todos los empleados con sus datos básicos</p>
-    <p>2) Empleados vigentes por departamento</p>
-    <p>3) Salario actual de cada empleado vigente</p>
-    <p>4) Manager actual de cada departamento</p>
-    <p>5) Empleado mejor pagado en cada departamento</p>
+    <a href="/#reporte1">1) Listar a todos los empleados con sus datos básicos</a>
+    <a href="/#reporte2">2) Empleados vigentes por departamento</a>
+    <a href="/salarios#reporte3">3) Salario actual de cada empleado vigente</a>
+    <a href="/managers#reporte4">4) Manager actual de cada departamento</a>
+    <a href="/highest#reporte5">5) Empleado mejor pagado en cada departamento</a>
+    <a href="/#graficas">6) Gráficas</a>
   </nav>
 
   <!-- REPORTE 1: Empleados -->
-  <h2>Reporte 1: Empleados</h2>
+  <h2 id="reporte1">Reporte 1: Empleados</h2>
+  <div class="table-wrap">
   <table>
     <thead>
       <tr>
@@ -51,9 +47,10 @@
       {% endif %}
     </tbody>
   </table>
+  </div>
 
   <!-- REPORTE 2: Vigentes por Departamento -->
-  <h2>Reporte 2: Vigentes por Departamento</h2>
+  <h2 id="reporte2">Reporte 2: Vigentes por Departamento</h2>
   <form method="get" action="/pordept">
     <label for="dept_id">Departamento:</label>
     <select id="dept_id" name="dept_id">
@@ -66,6 +63,7 @@
     <button type="submit">Filtrar</button>
   </form>
 
+  <div class="table-wrap">
   <table>
     <thead>
       <tr>
@@ -88,9 +86,11 @@
       {% endif %}
     </tbody>
   </table>
+  </div>
 
   <!-- REPORTE 3: Salarios actuales -->
-  <h2>Reporte 3: Salarios actuales</h2>
+  <h2 id="reporte3">Reporte 3: Salarios actuales</h2>
+  <div class="table-wrap">
   <table>
     <thead>
       <tr>
@@ -113,9 +113,11 @@
       {% endif %}
     </tbody>
   </table>
+  </div>
 
   <!-- REPORTE 4: Managers -->
-  <h2>Reporte 4: Managers</h2>
+  <h2 id="reporte4">Reporte 4: Managers</h2>
+  <div class="table-wrap">
   <table>
     <thead>
       <tr>
@@ -138,9 +140,11 @@
       {% endif %}
     </tbody>
   </table>
+  </div>
 
   <!-- REPORTE 5: Top pagado por departamento -->
-  <h2>Reporte 5: Top pagado</h2>
+  <h2 id="reporte5">Reporte 5: Top pagado</h2>
+  <div class="table-wrap">
   <table>
     <thead>
       <tr>
@@ -165,5 +169,42 @@
       {% endif %}
     </tbody>
   </table>
+  </div>
+
+  <!--AQUI VAN LAS GRAFICAAAS-->
+  <h2 id="graficas">Gráficas</h2>
+
+  <section class="charts-grid">
+  <!--grafica pastel-->
+  <article class="chart-card">
+    <h3 class="chart-title">Comparación por género (H vs M)</h3>
+    <div class="chart-body">
+
+
+
+    </div>
+  </article>
+
+  <!--grafica horizontal -->
+  <article class="chart-card">
+    <h3 class="chart-title">Top 10 empleados mejor pagados</h3>
+    <div class="chart-body">
+
+
+
+    </div>
+  </article>
+
+  <!--grafica vertical-->
+  <article class="chart-card">
+    <h3 class="chart-title">Promedio de salarios por departamento</h3>
+    <div class="chart-body">
+
+
+
+    </div>
+  </article>
+</section>
+
 </body>
 </html>
