@@ -1,78 +1,268 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from fastapi.templating import Jinja2Templates
 from typing import List, Optional
-from datetime import date
+import mysql.connector
+
+from DAO.employeeDAO import employeeDAO
+from DAO.deptoDAO import deptoDAO
+from models import *
+
+conexion = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="admin123.",
+    database="employeesdb",
+    port="3308"
+)
+
+eDAO = employeeDAO()
+dDAO = deptoDAO()
+empleados = []
+departamentos = []
+vigentes = []
+salarios = []
+managers = []
+top_pagados = []
 
 app = FastAPI(title="Reportes Empleados")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
-class EmpleadoBasico(BaseModel):
-    num_empleado: int
-    nombre: str
-    apellidos: str
-    genero: str
-    fecha_contrato: date
-
-class EmpleadoVigenteDepto(BaseModel):
-    num_empleado: int
-    nombre_completo: str
-    departamento: str
-    salario: float
-
-class SalarioActual(BaseModel):
-    num_empleado: int
-    nombre_completo: str
-    salario: float
-
-class ManagerDepto(BaseModel):
-    departamento: str
-    nombre: str
-    apellidos: str
-    fecha_inicio: date
-
-class TopPagadoDepto(BaseModel):
-    departamento: str
-    num_empleado: int
-    nombre_completo: str
-    salario: float
-
-class Departamento(BaseModel):
-    id: int
-    nombre: str
+# @app.get("/", response_class=HTMLResponse)
+# async def index():
+#     return FileResponse("static/index.html", media_type="text/html")
 
 @app.get("/", response_class=HTMLResponse)
-async def index():
-    return FileResponse("static/index.html", media_type="text/html")
+async def index(request: Request):
+    empleados = []
+    departamentos = []
+    rows = eDAO.get_all_employees(conexion)
+    for row in rows:
+        empleados.append({
+            "num_empleado": row["emp_no"],
+            "nombre": row["first_name"],
+            "apellidos": row["last_name"],
+            "genero": row["gender"],
+            "fecha_contrato": row["hire_date"]
+        })
+
+    rows = dDAO.get_all_depts(conexion)
+    for row in rows:
+        departamentos.append({
+            "id": row["dept_no"],
+            "nombre": row["dept_name"]
+        })
+
+    vigentes = []
+    salarios = []
+    managers = []
+    top_pagados = []
+
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "empleados": empleados,
+            "departamentos": departamentos,
+            "vigentes": vigentes,
+            "salarios": salarios,
+            "managers": managers,
+            "top_pagados": top_pagados,
+            "dept_id": None
+        }
+    )
 
 #///////////////////////////////////////////////////////////////
+@app.get("/pordept", response_class=HTMLResponse)
+async def index(request: Request, dept_id: Optional[str] = 0):
+    vigentes = []
+    rows = dDAO.get_employees_by_dept(conexion, dept_id)
+    for row in rows:
+        vigentes.append({
+            "num_empleado": row["emp_no"],
+            "nombre_completo": row["full_name"],
+            "departamento": row["dept_name"]
+        })
 
-@app.get("/api/empleados", response_model=List[EmpleadoBasico])
-def listar_empleados():
-    #rows = repo_listar_empleados()  # ← devuelve List[dict]
-    #return [EmpleadoBasico(**r) for r in rows]
-    return []
+    empleados = []
+    departamentos = []
+    salarios = []
+    managers = []
+    top_pagados = []
+    rows = eDAO.get_all_employees(conexion)
+    for row in rows:
+        empleados.append({
+            "num_empleado": row["emp_no"],
+            "nombre": row["first_name"],
+            "apellidos": row["last_name"],
+            "genero": row["gender"],
+            "fecha_contrato": row["hire_date"]
+        })
 
-@app.get("/api/departamentos", response_model=List[Departamento])
-def listar_departamentos():
-    return []
+    rows = dDAO.get_all_depts(conexion)
+    for row in rows:
+        departamentos.append({
+            "id": row["dept_no"],
+            "nombre": row["dept_name"]
+        })
 
-@app.get("/api/empleados/por-departamento", response_model=List[EmpleadoVigenteDepto])
-def empleados_por_departamento(
-    dept_id: Optional[int] = None,
-    dept_nombre: Optional[str] = None
-):
-    return []
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "empleados": empleados,
+            "departamentos": departamentos,
+            "vigentes": vigentes,
+            "salarios": salarios,
+            "managers": managers,
+            "top_pagados": top_pagados,
+            "dept_id": None
+        }
+    )
 
-@app.get("/api/salarios/actuales", response_model=List[SalarioActual])
-def salarios_actuales():
-    return []
+@app.get("/salarios", response_class=HTMLResponse)
+async def index(request: Request):
+    salarios = []
+    rows = eDAO.get_current_n_salary(conexion)
+    for row in rows:
+        salarios.append({
+            "num_empleado": row["emp_no"],
+            "nombre_completo": row["full_name"],
+            "salario": row["salary"]
+        })
 
-@app.get("/api/departamentos/manager", response_model=List[ManagerDepto])
-def managers_actuales():
-    return []
+    empleados = []
+    departamentos = []
+    vigentes = []
+    managers = []
+    top_pagados = []
 
-@app.get("/api/departamentos/pago-alto", response_model=List[TopPagadoDepto])
-def top_pagado_por_departamento():
-    return []
+    rows = eDAO.get_all_employees(conexion)
+    for row in rows:
+        empleados.append({
+            "num_empleado": row["emp_no"],
+            "nombre": row["first_name"],
+            "apellidos": row["last_name"],
+            "genero": row["gender"],
+            "fecha_contrato": row["hire_date"]
+        })
+
+    rows = dDAO.get_all_depts(conexion)
+    for row in rows:
+        departamentos.append({
+            "id": row["dept_no"],
+            "nombre": row["dept_name"]
+        })
+
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "empleados": empleados,
+            "departamentos": departamentos,
+            "vigentes": vigentes,
+            "salarios": salarios,
+            "managers": managers,
+            "top_pagados": top_pagados,
+            "dept_id": None
+        }
+    )
+
+@app.get("/managers", response_class=HTMLResponse)
+async def index(request: Request):
+    managers = []
+    rows = dDAO.get_managers(conexion)
+    for row in rows:
+        managers.append({
+            "departamento": row["dept_name"],
+            "nombre_completo": row["full_name"],
+            "fecha_inicio": row["from_date"]
+        })
+
+    empleados = []
+    departamentos = []
+    vigentes = []
+    salarios = []
+    top_pagados = []
+
+    rows = eDAO.get_all_employees(conexion)
+    for row in rows:
+        empleados.append({
+            "num_empleado": row["emp_no"],
+            "nombre": row["first_name"],
+            "apellidos": row["last_name"],
+            "genero": row["gender"],
+            "fecha_contrato": row["hire_date"]
+        })
+
+    rows = dDAO.get_all_depts(conexion)
+    for row in rows:
+        departamentos.append({
+            "id": row["dept_no"],
+            "nombre": row["dept_name"]
+        })
+
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "empleados": empleados,
+            "departamentos": departamentos,
+            "vigentes": vigentes,
+            "salarios": salarios,
+            "managers": managers,
+            "top_pagados": top_pagados,
+            "dept_id": None
+        }
+    )
+
+@app.get("/highest", response_class=HTMLResponse)
+async def index(request: Request):
+    top_pagados = []
+    rows = dDAO.highest_payed(conexion)
+    for row in rows:
+        top_pagados.append({
+            "departamento": row["dept_name"],
+            "num_empleado": row["emp_no"],
+            "nombre_completo": row["full_name"],
+            "salario": row["salary"]
+        })
+
+    empleados = []
+    departamentos = []
+    vigentes = []
+    salarios = []
+    managers = []
+
+    rows = eDAO.get_all_employees(conexion)
+    for row in rows:
+        empleados.append({
+            "num_empleado": row["emp_no"],
+            "nombre": row["first_name"],
+            "apellidos": row["last_name"],
+            "genero": row["gender"],
+            "fecha_contrato": row["hire_date"]
+        })
+
+    rows = dDAO.get_all_depts(conexion)
+    for row in rows:
+        departamentos.append({
+            "id": row["dept_no"],
+            "nombre": row["dept_name"]
+        })
+
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "empleados": empleados,
+            "departamentos": departamentos,
+            "vigentes": vigentes,
+            "salarios": salarios,
+            "managers": managers,
+            "top_pagados": top_pagados,
+            "dept_id": None
+        }
+    )
