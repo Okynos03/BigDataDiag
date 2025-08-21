@@ -11,10 +11,10 @@ from models import *
 
 conexion = mysql.connector.connect(
     host="localhost",
-    user="adminDB",
-    password="5860",
+    user="root",
+    password="admin123.",
     database="employeesdb",
-    port="3306",
+    port="3308",
     charset="utf8mb4"
 )
 
@@ -143,6 +143,32 @@ async def index(request: Request, dept_id: Optional[str] = 0):
             "nombre": row["dept_name"]
         })
 
+    empleados_top = []
+    salarios_top = []
+
+    rows = eDAO.get_top_ten(conexion)
+    for row in rows:
+        empleados_top.append(
+            {
+                "full_name": row["full_name"]
+            })
+        salarios_top.append(row["salary"])
+
+    avg_deparment = []
+    avg_salario = []
+
+    rows = dDAO.get_avg(conexion)
+    for row in rows:
+        avg_deparment.append({
+            "departamento": row["dept_name"]
+        })
+        avg_salario.append({
+            "salario": float(row["avg"])
+        })
+
+    num_male_employees = eDAO.get_num_male_employee(conexion)
+    num_female_employees = eDAO.get_num_female_employee(conexion)
+
     return templates.TemplateResponse(
         "index.html",
         {
@@ -153,7 +179,13 @@ async def index(request: Request, dept_id: Optional[str] = 0):
             "salarios": salarios,
             "managers": managers,
             "top_pagados": top_pagados,
-            "dept_id": None
+            "dept_id": None,
+            "num_male_employee" : num_male_employees,
+            "num_female_employee" : num_female_employees,
+            "empleados_top" : empleados_top,
+            "salarios_top": salarios_top,
+            "avg_deparment": avg_deparment,
+            "avg_salario": avg_salario
         }
     )
 
@@ -191,6 +223,32 @@ async def index(request: Request):
             "nombre": row["dept_name"]
         })
 
+    empleados_top = []
+    salarios_top = []
+
+    rows = eDAO.get_top_ten(conexion)
+    for row in rows:
+        empleados_top.append(
+            {
+                "full_name": row["full_name"]
+            })
+        salarios_top.append(row["salary"])
+
+    avg_deparment = []
+    avg_salario = []
+
+    rows = dDAO.get_avg(conexion)
+    for row in rows:
+        avg_deparment.append({
+            "departamento": row["dept_name"]
+        })
+        avg_salario.append({
+            "salario": float(row["avg"])
+        })
+
+    num_male_employees = eDAO.get_num_male_employee(conexion)
+    num_female_employees = eDAO.get_num_female_employee(conexion)
+
     return templates.TemplateResponse(
         "index.html",
         {
@@ -201,7 +259,13 @@ async def index(request: Request):
             "salarios": salarios,
             "managers": managers,
             "top_pagados": top_pagados,
-            "dept_id": None
+            "dept_id": None,
+            "num_male_employee" : num_male_employees,
+            "num_female_employee" : num_female_employees,
+            "empleados_top" : empleados_top,
+            "salarios_top": salarios_top,
+            "avg_deparment": avg_deparment,
+            "avg_salario": avg_salario
         }
     )
 
@@ -239,6 +303,32 @@ async def index(request: Request):
             "nombre": row["dept_name"]
         })
 
+    empleados_top = []
+    salarios_top = []
+
+    rows = eDAO.get_top_ten(conexion)
+    for row in rows:
+        empleados_top.append(
+            {
+                "full_name": row["full_name"]
+            })
+        salarios_top.append(row["salary"])
+
+    avg_deparment = []
+    avg_salario = []
+
+    rows = dDAO.get_avg(conexion)
+    for row in rows:
+        avg_deparment.append({
+            "departamento": row["dept_name"]
+        })
+        avg_salario.append({
+            "salario": float(row["avg"])
+        })
+
+    num_male_employees = eDAO.get_num_male_employee(conexion)
+    num_female_employees = eDAO.get_num_female_employee(conexion)
+
     return templates.TemplateResponse(
         "index.html",
         {
@@ -249,7 +339,13 @@ async def index(request: Request):
             "salarios": salarios,
             "managers": managers,
             "top_pagados": top_pagados,
-            "dept_id": None
+            "dept_id": None,
+            "num_male_employee" : num_male_employees,
+            "num_female_employee" : num_female_employees,
+            "empleados_top" : empleados_top,
+            "salarios_top": salarios_top,
+            "avg_deparment": avg_deparment,
+            "avg_salario": avg_salario
         }
     )
 
@@ -288,6 +384,32 @@ async def index(request: Request):
             "nombre": row["dept_name"]
         })
 
+    empleados_top = []
+    salarios_top = []
+
+    rows = eDAO.get_top_ten(conexion)
+    for row in rows:
+        empleados_top.append(
+            {
+                "full_name": row["full_name"]
+            })
+        salarios_top.append(row["salary"])
+
+    avg_deparment = []
+    avg_salario = []
+
+    rows = dDAO.get_avg(conexion)
+    for row in rows:
+        avg_deparment.append({
+            "departamento": row["dept_name"]
+        })
+        avg_salario.append({
+            "salario": float(row["avg"])
+        })
+
+    num_male_employees = eDAO.get_num_male_employee(conexion)
+    num_female_employees = eDAO.get_num_female_employee(conexion)
+
     return templates.TemplateResponse(
         "index.html",
         {
@@ -298,6 +420,12 @@ async def index(request: Request):
             "salarios": salarios,
             "managers": managers,
             "top_pagados": top_pagados,
-            "dept_id": None
+            "dept_id": None,
+            "num_male_employee" : num_male_employees,
+            "num_female_employee" : num_female_employees,
+            "empleados_top" : empleados_top,
+            "salarios_top": salarios_top,
+            "avg_deparment": avg_deparment,
+            "avg_salario": avg_salario
         }
     )
