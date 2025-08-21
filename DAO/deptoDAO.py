@@ -106,7 +106,7 @@ class deptoDAO:
         try:
             cursor = conn.cursor(dictionary=True)
             query = (
-                "SELECT d.dept_name, AVG(s.salary) "
+                "SELECT d.dept_name, AVG(s.salary) as avg "
                 "FROM departments d "
                 "INNER JOIN dept_emp de ON d.dept_no = de.dept_no "
                 "INNER JOIN salaries s ON de.emp_no = s.emp_no "

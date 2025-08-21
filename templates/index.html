@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Examen Diagnostico Empleados</title>
   <link rel="stylesheet" href="../static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        console.log({{ num_female_employee }});
+        let empleados_top = {{ empleados_top | tojson }}
+        let avg_department = {{ avg_deparment | tojson }}
+        let  avg_salario = {{ avg_salario | tojson }}
+          const num_female_employee = {{ num_female_employee }};
+          const num_male_employee = {{ num_male_employee }};
+          const salarios_top = {{ salarios_top }};
+      </script>
 </head>
 <body>
   <h1>Empleados</h1>
@@ -179,9 +189,7 @@
   <article class="chart-card">
     <h3 class="chart-title">Comparación por género (H vs M)</h3>
     <div class="chart-body">
-
-
-
+        <canvas id="graficoPastel"></canvas>
     </div>
   </article>
 
@@ -189,9 +197,7 @@
   <article class="chart-card">
     <h3 class="chart-title">Top 10 empleados mejor pagados</h3>
     <div class="chart-body">
-
-
-
+        <canvas id="graficoBarrasHorizontal"></canvas>
     </div>
   </article>
 
@@ -199,11 +205,10 @@
   <article class="chart-card">
     <h3 class="chart-title">Promedio de salarios por departamento</h3>
     <div class="chart-body">
-
-
-
+        <canvas id="graficoBarrasVertical"></canvas>
     </div>
   </article>
+    <script src="../static/graficos.js"></script>
 </section>
 
 </body>

@@ -11,10 +11,11 @@ from models import *
 
 conexion = mysql.connector.connect(
     host="localhost",
-    user="root",
-    password="admin123.",
+    user="adminDB",
+    password="5860",
     database="employeesdb",
-    port="3308"
+    port="3306",
+    charset="utf8mb4"
 )
 
 eDAO = employeeDAO()
@@ -38,6 +39,18 @@ templates = Jinja2Templates(directory="templates")
 async def index(request: Request):
     empleados = []
     departamentos = []
+
+    empleados_top = []
+    salarios_top = []
+
+    rows = eDAO.get_top_ten(conexion)
+    for row in rows:
+        empleados_top.append(
+            {
+                "full_name": row["full_name"]
+            })
+        salarios_top.append(row["salary"])
+
     rows = eDAO.get_all_employees(conexion)
     for row in rows:
         empleados.append({
@@ -55,6 +68,22 @@ async def index(request: Request):
             "nombre": row["dept_name"]
         })
 
+    avg_deparment = []
+    avg_salario = []
+
+    rows = dDAO.get_avg(conexion)
+    for row in rows:
+        avg_deparment.append({
+            "departamento": row["dept_name"]
+        })
+        avg_salario.append({
+            "salario": float(row["avg"])
+        })
+
+    num_male_employees = eDAO.get_num_male_employee(conexion)
+    num_female_employees = eDAO.get_num_female_employee(conexion)
+
+
     vigentes = []
     salarios = []
     managers = []
@@ -70,7 +99,13 @@ async def index(request: Request):
             "salarios": salarios,
             "managers": managers,
             "top_pagados": top_pagados,
-            "dept_id": None
+            "dept_id": None,
+            "num_male_employee" : num_male_employees,
+            "num_female_employee" : num_female_employees,
+            "empleados_top" : empleados_top,
+            "salarios_top": salarios_top,
+            "avg_deparment": avg_deparment,
+            "avg_salario": avg_salario
         }
     )
 

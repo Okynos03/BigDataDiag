@@ -1,5 +1,7 @@
 import mysql.connector
 
+
+
 class employeeDAO:
     def __init__(self):
         pass
@@ -71,9 +73,40 @@ class employeeDAO:
             cursor.execute(query)
 
             top_ten = cursor.fetchall()
+
             cursor.close()
 
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 
         return top_ten
+
+    def get_num_female_employee(self, conn):
+        count = 0
+        try:
+            cursor = conn.cursor(dictionary=True)
+            query = "select count(emp_no) from employees where gender = 'F';"
+            cursor.execute(query)
+            num_female_employee = cursor.fetchone()
+            count = num_female_employee['count(emp_no)']
+            cursor.close()
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+
+        return count
+
+    def get_num_male_employee(self, conn):
+        count = 0
+        try:
+            cursor = conn.cursor(dictionary=True)
+            query = "select count(emp_no) from employees where gender = 'M';"
+            cursor.execute(query)
+            num_male_employee = cursor.fetchone()
+            count = num_male_employee['count(emp_no)']
+            cursor.close()
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+
+        return count
